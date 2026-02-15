@@ -774,6 +774,7 @@ dependencies = [
 name = "petri"
 version = "0.1.0"
 dependencies = [
+ "crossterm",
  "ratatui",
 ]
 
