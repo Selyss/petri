@@ -2,6 +2,62 @@ mod app;
 mod grid;
 mod ui;
 
-fn main() {
-    println!("Hello, world!");
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
+
+use ratatui::prelude::*;
+
+fn main() -> io::Result<()> {
+    // setup
+    terminal::enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    let result = run(&mut terminal);
+
+    // cleanup
+    terminal::disable_raw_mode()?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    result
+}
+
+fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
+    let mut app = app::App::new(64, 32);
+    let tick_rate = Duration::from_millis(100);
+    let mut last_tick = Instant::now();
+
+    loop {
+        terminal.draw(|frame| ui::draw(frame, &app))?;
+
+        let timeout = tick_rate.saturating_sub(last_tick.elapsed());
+        if event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                match key.code {
+                    KeyCode::Char('q') => return Ok(()),
+                    KeyCode::Char(' ') => app.toggle_pause(),
+                    KeyCode::Char('n') => app.step(),
+                    KeyCode::Char('r') => app.randomize(),
+                    KeyCode::Char('c') => app.clear(),
+                    // TODO: cursor movement, cell toggling, speed controls
+                    _ => {}
+                }
+            }
+        }
+
+        if last_tick.elapsed() >= tick_rate {
+            if !app.paused {
+                app.step();
+            }
+            last_tick = Instant::now();
+        }
+    }
 }
