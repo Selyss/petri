@@ -35,6 +35,16 @@ impl Grid {
 
     pub fn step(&mut self) {
         // TODO: implement rules, write result to scratch buffer, swap buffers
+        for x in 0..self.height {
+            for y in 0..self.width {
+                let idx = y * self.width + x;
+                let neighbors = self.count_neighbors(x, y);
+                let alive = self.cells[idx];
+
+                self.scratch[idx] =
+                    matches!((alive, neighbors), (true, 2) | (true, 3) | (false, 3));
+            }
+        }
         std::mem::swap(&mut self.cells, &mut self.scratch);
     }
 
