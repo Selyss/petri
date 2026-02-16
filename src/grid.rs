@@ -34,7 +34,6 @@ impl Grid {
     }
 
     pub fn step(&mut self) {
-        // TODO: implement rules, write result to scratch buffer, swap buffers
         for x in 0..self.height {
             for y in 0..self.width {
                 let idx = y * self.width + x;
@@ -55,5 +54,71 @@ impl Grid {
 
     pub fn clear(&mut self) {
         self.cells.fill(false);
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Helper: create a grid and set specific cells alive
+    fn grid_from_points(width: usize, height: usize, alive: &[(usize, usize)]) -> Grid {
+        let mut grid = Grid::new(width, height);
+        for &(x, y) in alive {
+            grid.cells[y * width + x] = true;
+        }
+        grid
+    }
+
+    /// Helper: collect all alive cell positions
+    fn alive_cells(grid: &Grid) -> Vec<(usize, usize)> {
+        let mut result = Vec::new();
+        for y in 0..grid.height {
+            for x in 0..grid.width {
+                if grid.cells[y * grid.width + x] {
+                    result.push((x, y));
+                }
+            }
+        }
+        result.sort();
+        result
+    }
+
+    #[test]
+    fn block_still_life() {
+        // 2x2 block should never change
+        let mut grid = grid_from_points(6, 6, &[(1, 1), (2, 1), (1, 2), (2, 2)]);
+        for _ in 0..5 {
+            grid.step();
+            assert_eq!(alive_cells(&grid), vec![(1, 1), (1, 2), (2, 1), (2, 2)]);
+        }
+    }
+
+    #[test]
+    fn blinker_oscillator() {
+        // Vertical line of 3 should toggle to horizontal and back
+        let vertical = vec![(2, 1), (2, 2), (2, 3)];
+        let horizontal = vec![(1, 2), (2, 2), (3, 2)];
+
+        let mut grid = grid_from_points(6, 6, &vertical);
+
+        grid.step();
+        assert_eq!(alive_cells(&grid), horizontal);
+
+        grid.step();
+        assert_eq!(alive_cells(&grid), vertical);
+    }
+
+    #[test]
+    fn empty_grid_stays_empty() {
+        let mut grid = Grid::new(10, 10);
+        grid.step();
+        assert!(alive_cells(&grid).is_empty());
+    }
+
+    #[test]
+    fn lone_cell_dies() {
+        let mut grid = grid_from_points(6, 6, &[(3, 3)]);
+        grid.step();
+        assert!(alive_cells(&grid).is_empty());
     }
 }
