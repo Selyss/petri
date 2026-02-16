@@ -48,8 +48,13 @@ impl Grid {
     }
 
     pub fn randomize(&mut self) {
-        // TODO: fill with random (or allow for custom positions)
-        todo!()
+        // TODO: allow for custom start positions
+        for x in 0..self.height {
+            for y in 0..self.width {
+                let alive = fastrand::f64() < 0.3;
+                self.cells[y * self.width + x] = alive;
+            }
+        }
     }
 
     pub fn clear(&mut self) {
