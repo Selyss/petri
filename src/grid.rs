@@ -16,6 +16,23 @@ impl Grid {
         }
     }
 
+    pub fn count_neighbors(&self, x: usize, y: usize) -> u8 {
+        let mut count = 0u8;
+        for dy in [-1isize, 0, 1] {
+            for dx in [-1isize, 0, 1] {
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
+                let nx = (x as isize + dx).rem_euclid(self.width as isize) as usize;
+                let ny = (y as isize + dy).rem_euclid(self.height as isize) as usize;
+                if self.cells[ny * self.width + nx] {
+                    count += 1;
+                }
+            }
+        }
+        count
+    }
+
     pub fn step(&mut self) {
         // TODO: implement rules, write result to scratch buffer, swap buffers
         std::mem::swap(&mut self.cells, &mut self.scratch);
