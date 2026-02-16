@@ -34,8 +34,8 @@ impl Grid {
     }
 
     pub fn step(&mut self) {
-        for x in 0..self.height {
-            for y in 0..self.width {
+        for y in 0..self.height {
+            for x in 0..self.width {
                 let idx = y * self.width + x;
                 let neighbors = self.count_neighbors(x, y);
                 let alive = self.cells[idx];
@@ -49,9 +49,9 @@ impl Grid {
 
     pub fn randomize(&mut self) {
         // TODO: allow for custom start positions
-        for x in 0..self.height {
-            for y in 0..self.width {
-                let alive = fastrand::f64() < 0.3;
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let alive = fastrand::f64() < 0.25;
                 self.cells[y * self.width + x] = alive;
             }
         }
