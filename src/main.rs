@@ -56,7 +56,7 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('n') => app.step(),
                     KeyCode::Char('r') => app.randomize(),
                     KeyCode::Char('c') => app.clear(),
-                    // TODO: cursor movement, cell toggling, speed controls
+                    KeyCode::Enter => app.toggle_cell(),
                     _ => {}
                 }
             }
