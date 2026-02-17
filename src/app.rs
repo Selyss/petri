@@ -48,11 +48,11 @@ impl App {
     }
 
     pub fn move_down(&mut self) {
-        self.cursor_y = (self.cursor_y as isize + 1).rem_euclid(self.grid.width as isize) as usize;
+        self.cursor_y = (self.cursor_y as isize + 1).rem_euclid(self.grid.height as isize) as usize;
     }
 
     pub fn move_up(&mut self) {
-        self.cursor_y = (self.cursor_y as isize - 1).rem_euclid(self.grid.width as isize) as usize;
+        self.cursor_y = (self.cursor_y as isize - 1).rem_euclid(self.grid.height as isize) as usize;
     }
 
     pub fn move_right(&mut self) {
