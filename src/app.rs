@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::grid::Grid;
 
 pub struct App {
@@ -6,6 +8,7 @@ pub struct App {
     pub generation: usize,
     pub cursor_x: usize,
     pub cursor_y: usize,
+    pub tick_rate: Duration,
 }
 
 impl App {
@@ -16,6 +19,7 @@ impl App {
             generation: 0,
             cursor_x: 0,
             cursor_y: 0,
+            tick_rate: Duration::from_millis(100),
         }
     }
 
@@ -57,5 +61,17 @@ impl App {
 
     pub fn move_right(&mut self) {
         self.cursor_x = (self.cursor_x as isize + 1).rem_euclid(self.grid.width as isize) as usize;
+    }
+
+    pub fn speed_up(&mut self) {
+        self.tick_rate = self
+            .tick_rate
+            .saturating_sub(Duration::from_millis(25))
+            .max(Duration::from_millis(10));
+    }
+
+    pub fn slow_down(&mut self) {
+        self.tick_rate =
+            (self.tick_rate + Duration::from_millis(25)).min(Duration::from_millis(1000));
     }
 }

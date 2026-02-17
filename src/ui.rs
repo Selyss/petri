@@ -7,9 +7,10 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let status = if app.paused { "PAUSED" } else { "RUNNING" };
     let text = format!(
-        "Frame: {}  |  {}  |  [space] pause  [n] step  [r] random  [c] clear  [q] quit",
+        "Frame: {}  |  {}  |  [space] pause  [n] step  [r] random  [=/-] speed  [c] clear  [q] quit",
         app.generation, status
     );
+    // TODO: add stats: alive/dead, speed, etc.
 
     let mut lines: Vec<Line> = Vec::new();
 

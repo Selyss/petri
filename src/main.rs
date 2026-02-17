@@ -41,13 +41,12 @@ fn main() -> io::Result<()> {
 
 fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
     let mut app = app::App::new(64, 32);
-    let tick_rate = Duration::from_millis(100);
     let mut last_tick = Instant::now();
 
     loop {
         terminal.draw(|frame| ui::draw(frame, &app))?;
 
-        let timeout = tick_rate.saturating_sub(last_tick.elapsed());
+        let timeout = app.tick_rate.saturating_sub(last_tick.elapsed());
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
                 match key.code {
@@ -61,12 +60,14 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('j') => app.move_down(),
                     KeyCode::Char('k') => app.move_up(),
                     KeyCode::Char('l') => app.move_right(),
+                    KeyCode::Char('+') | KeyCode::Char('=') => app.speed_up(),
+                    KeyCode::Char('-') => app.slow_down(),
                     _ => {}
                 }
             }
         }
 
-        if last_tick.elapsed() >= tick_rate {
+        if last_tick.elapsed() >= app.tick_rate {
             if !app.paused {
                 app.step();
             }
