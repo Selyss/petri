@@ -20,7 +20,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
             let symbol = if alive { "██" } else { "  " };
 
             let style = if x == app.cursor_x && y == app.cursor_y {
-                Style::default().bg(Color::DarkGray)
+                Style::default().bg(Color::LightGreen)
             } else {
                 Style::default()
             };
