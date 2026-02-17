@@ -42,4 +42,20 @@ impl App {
         let idx = self.cursor_y * self.grid.width + self.cursor_x;
         self.grid.cells[idx] = !self.grid.cells[idx];
     }
+
+    pub fn move_left(&mut self) {
+        self.cursor_x = (self.cursor_x as isize - 1).rem_euclid(self.grid.width as isize) as usize;
+    }
+
+    pub fn move_down(&mut self) {
+        self.cursor_y = (self.cursor_y as isize + 1).rem_euclid(self.grid.width as isize) as usize;
+    }
+
+    pub fn move_up(&mut self) {
+        self.cursor_y = (self.cursor_y as isize - 1).rem_euclid(self.grid.width as isize) as usize;
+    }
+
+    pub fn move_right(&mut self) {
+        self.cursor_x = (self.cursor_x as isize + 1).rem_euclid(self.grid.width as isize) as usize;
+    }
 }

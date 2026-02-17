@@ -57,6 +57,10 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('r') => app.randomize(),
                     KeyCode::Char('c') => app.clear(),
                     KeyCode::Enter => app.toggle_cell(),
+                    KeyCode::Char('h') => app.move_left(),
+                    KeyCode::Char('j') => app.move_down(),
+                    KeyCode::Char('k') => app.move_up(),
+                    KeyCode::Char('l') => app.move_right(),
                     _ => {}
                 }
             }
