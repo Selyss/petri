@@ -7,10 +7,7 @@ use crossterm::{
     execute,
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::{io, time::Instant};
 
 use ratatui::prelude::*;
 
@@ -62,6 +59,7 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('l') => app.move_right(),
                     KeyCode::Char('+') | KeyCode::Char('=') => app.speed_up(),
                     KeyCode::Char('-') => app.slow_down(),
+                    KeyCode::Tab => app.toggle_cursor(),
                     _ => {}
                 }
             }

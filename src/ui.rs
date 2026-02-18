@@ -7,7 +7,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let status = if app.paused { "PAUSED" } else { "RUNNING" };
     let text = format!(
-        "Frame: {}  |  {}  |  [space] pause  [n] step  [r] random  [=/-] speed  [c] clear  [q] quit",
+        "Frame: {}  |  {}  |  [space] pause  [n] step  [r] random  [tab] toggle cursor  [=/-] speed  [c] clear  [q] quit",
         app.generation, status
     );
     // TODO: add stats: alive/dead, speed, etc.
@@ -20,7 +20,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
             let alive = app.grid.cells[y * app.grid.width + x];
             let symbol = if alive { "██" } else { "  " };
 
-            let style = if x == app.cursor_x && y == app.cursor_y {
+            let style = if x == app.cursor_x && y == app.cursor_y && app.cursor_visible {
                 Style::default().bg(Color::LightGreen)
             } else {
                 Style::default()

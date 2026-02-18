@@ -9,6 +9,7 @@ pub struct App {
     pub cursor_x: usize,
     pub cursor_y: usize,
     pub tick_rate: Duration,
+    pub cursor_visible: bool,
 }
 
 impl App {
@@ -20,6 +21,7 @@ impl App {
             cursor_x: 0,
             cursor_y: 0,
             tick_rate: Duration::from_millis(100),
+            cursor_visible: false,
         }
     }
 
@@ -73,5 +75,9 @@ impl App {
     pub fn slow_down(&mut self) {
         self.tick_rate =
             (self.tick_rate + Duration::from_millis(25)).min(Duration::from_millis(1000));
+    }
+
+    pub fn toggle_cursor(&mut self) {
+        self.cursor_visible = !self.cursor_visible;
     }
 }
