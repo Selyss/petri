@@ -10,6 +10,7 @@ pub struct App {
     pub cursor_y: usize,
     pub tick_rate: Duration,
     pub cursor_visible: bool,
+    pub pattern_mode: bool,
 }
 
 impl App {
@@ -22,6 +23,7 @@ impl App {
             cursor_y: 0,
             tick_rate: Duration::from_millis(100),
             cursor_visible: false,
+            pattern_mode: false,
         }
     }
 
@@ -79,5 +81,14 @@ impl App {
 
     pub fn toggle_cursor(&mut self) {
         self.cursor_visible = !self.cursor_visible;
+    }
+
+    pub fn place_pattern(&mut self, patterns: &crate::patterns::Pattern) {
+        for &(dx, dy) in patterns.cells {
+            let x = (self.cursor_x as isize + dx).rem_euclid(self.grid.width as isize) as usize;
+            let y = (self.cursor_y as isize + dy).rem_euclid(self.grid.height as isize) as usize;
+            let idx = y * self.grid.width + x;
+            self.grid.cells[idx] = true;
+        }
     }
 }

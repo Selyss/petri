@@ -1,5 +1,6 @@
 mod app;
 mod grid;
+mod patterns;
 mod ui;
 
 use crossterm::{
@@ -61,6 +62,22 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('+') | KeyCode::Char('=') => app.speed_up(),
                     KeyCode::Char('-') => app.slow_down(),
                     KeyCode::Tab => app.toggle_cursor(),
+                    KeyCode::Char('p') => {
+                        app.pattern_mode = !app.pattern_mode;
+                        if app.pattern_mode && !app.cursor_visible {
+                            app.cursor_visible = true;
+                        }
+                    }
+                    KeyCode::Char(c) if app.pattern_mode && c.is_ascii_digit() => {
+                        let idx = c.to_digit(10).unwrap() as usize;
+                        if idx >= 1 && idx <= patterns::ALL.len() {
+                            app.place_pattern(patterns::ALL[idx - 1]);
+                            app.pattern_mode = false;
+                        }
+                    }
+                    KeyCode::Esc => {
+                        app.pattern_mode = false;
+                    }
                     _ => {}
                 }
             }

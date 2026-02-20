@@ -1,4 +1,5 @@
 use crate::app::App;
+use crate::patterns;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Paragraph};
 
@@ -67,6 +68,26 @@ pub fn draw(frame: &mut Frame, app: &App) {
         vec![]
     };
 
+    let mode_spans = if app.pattern_mode {
+        let pattern_list: String = patterns::ALL
+            .iter()
+            .enumerate()
+            .map(|(i, p)| format!("{}:{}", i + 1, p.name))
+            .collect::<Vec<_>>()
+            .join(" ");
+        vec![
+            sep.clone(),
+            Span::styled(
+                format!(" PATTERN: {}  Esc:cancel ", pattern_list),
+                Style::default()
+                    .bg(Color::Rgb(160, 100, 40))
+                    .fg(Color::White),
+            ),
+        ]
+    } else {
+        vec![]
+    };
+
     let mut spans = vec![
         Span::styled(format!(" {} ", status), status_style),
         sep.clone(),
@@ -75,6 +96,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         Span::styled(format!(" {}ms ", app.tick_rate.as_millis()), bright),
     ];
     spans.extend(cursor_info);
+    spans.extend(mode_spans);
     spans.push(sep.clone());
     spans.push(Span::styled(
         " [spc] pause  [n] step  [r] rand  [tab] cursor  [±] speed  [c] clear  [q] quit ",
