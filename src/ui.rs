@@ -31,7 +31,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let grid_widget = Paragraph::new(lines).block(grid_block);
     frame.render_widget(grid_widget, chunks[0]);
 
-    let status = if app.paused { "PAUSED" } else { "RUNNING" };
+    let status = if app.paused { "PAUSED " } else { "RUNNING" };
     let status_style = if app.paused {
         Style::default()
             .bg(Color::Rgb(180, 60, 60))
@@ -70,14 +70,14 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let mut spans = vec![
         Span::styled(format!(" {} ", status), status_style),
         sep.clone(),
-        Span::styled(format!(" Frame: {} ", app.generation), bright),
+        Span::styled(format!(" Gen: {} ", app.generation), bright),
         sep.clone(),
         Span::styled(format!(" {}ms ", app.tick_rate.as_millis()), bright),
     ];
     spans.extend(cursor_info);
     spans.push(sep.clone());
     spans.push(Span::styled(
-        " space:pause n:step r:rand tab:cursor ±:speed c:clear q:quit ",
+        " [spc] pause  [n] step  [r] rand  [tab] cursor  [±] speed  [c] clear  [q] quit ",
         dim,
     ));
 
