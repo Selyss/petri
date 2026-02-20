@@ -13,7 +13,6 @@ use ratatui::prelude::*;
 
 fn main() -> io::Result<()> {
     // custom panic because the terminal remains in raw mode otherwise
-
     let default_panic = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         terminal::disable_raw_mode().unwrap();
@@ -21,7 +20,6 @@ fn main() -> io::Result<()> {
         default_panic(info);
     }));
 
-    // setup
     terminal::enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
@@ -30,7 +28,6 @@ fn main() -> io::Result<()> {
 
     let result = run(&mut terminal);
 
-    // cleanup
     terminal::disable_raw_mode()?;
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     result

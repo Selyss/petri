@@ -3,14 +3,10 @@ use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Paragraph};
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    let area = frame.area();
-
-    let status = if app.paused { "PAUSED" } else { "RUNNING" };
-    let text = format!(
-        "Frame: {}  |  {}  |  [space] pause  [n] step  [r] random  [tab] toggle cursor  [=/-] speed  [c] clear  [q] quit",
-        app.generation, status
-    );
-    // TODO: add stats: alive/dead, speed, etc.
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(1), Constraint::Length(3)])
+        .split(frame.area());
 
     let mut lines: Vec<Line> = Vec::new();
 
@@ -30,12 +26,23 @@ pub fn draw(frame: &mut Frame, app: &App) {
         lines.push(Line::from(spans))
     }
 
-    lines.push(Line::from(""));
-    lines.push(Line::from(text));
+    let grid_block = Block::default().borders(Borders::ALL).title(" Petri ");
 
-    let block = Block::default().borders(Borders::ALL).title(" Petri ");
+    let grid_widget = Paragraph::new(lines).block(grid_block);
+    frame.render_widget(grid_widget, chunks[0]);
 
-    let paragraph = Paragraph::new(lines).block(block);
+    let status = if app.paused { "PAUSED" } else { "RUNNING" };
+    // TODO: add stats: alive/dead, speed, etc.
 
-    frame.render_widget(paragraph, area);
+    let controls = format!(
+        "Frame: {}  |  {}  | {}ms | [space] pause  [n] step  [r] random  [tab] cursor  [=/-] speed  [c] clear  [q] quit",
+        app.generation,
+        status,
+        app.tick_rate.as_millis()
+    );
+
+    let status_block = Block::default().borders(Borders::ALL);
+
+    let status_widget = Paragraph::new(controls).block(status_block);
+    frame.render_widget(status_widget, chunks[1]);
 }
