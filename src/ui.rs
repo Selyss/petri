@@ -5,7 +5,7 @@ use ratatui::widgets::{Block, Borders, Paragraph};
 pub fn draw(frame: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Min(1), Constraint::Length(3)])
+        .constraints([Constraint::Min(1), Constraint::Length(1)])
         .split(frame.area());
 
     let mut lines: Vec<Line> = Vec::new();
@@ -32,17 +32,57 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.render_widget(grid_widget, chunks[0]);
 
     let status = if app.paused { "PAUSED" } else { "RUNNING" };
-    // TODO: add stats: alive/dead, speed, etc.
+    let status_style = if app.paused {
+        Style::default()
+            .bg(Color::Rgb(180, 60, 60))
+            .fg(Color::White)
+    } else {
+        Style::default()
+            .bg(Color::Rgb(60, 160, 60))
+            .fg(Color::White)
+    };
 
-    let controls = format!(
-        "Frame: {}  |  {}  | {}ms | [space] pause  [n] step  [r] random  [tab] cursor  [=/-] speed  [c] clear  [q] quit",
-        app.generation,
-        status,
-        app.tick_rate.as_millis()
-    );
+    let dim = Style::default()
+        .bg(Color::Rgb(45, 45, 65))
+        .fg(Color::Rgb(140, 140, 170));
+    let bright = Style::default()
+        .bg(Color::Rgb(60, 60, 90))
+        .fg(Color::Rgb(200, 200, 230));
+    let sep = Span::styled(" │ ", dim);
 
-    let status_block = Block::default().borders(Borders::ALL);
+    let cursor_info = if app.cursor_visible {
+        let cell_state = if app.grid.cells[app.cursor_y * app.grid.width + app.cursor_x] {
+            "●"
+        } else {
+            "○"
+        };
+        vec![
+            sep.clone(),
+            Span::styled(
+                format!(" ({},{}) {} ", app.cursor_x, app.cursor_y, cell_state),
+                bright,
+            ),
+        ]
+    } else {
+        vec![]
+    };
 
-    let status_widget = Paragraph::new(controls).block(status_block);
+    let mut spans = vec![
+        Span::styled(format!(" {} ", status), status_style),
+        sep.clone(),
+        Span::styled(format!(" Frame: {} ", app.generation), bright),
+        sep.clone(),
+        Span::styled(format!(" {}ms ", app.tick_rate.as_millis()), bright),
+    ];
+    spans.extend(cursor_info);
+    spans.push(sep.clone());
+    spans.push(Span::styled(
+        " space:pause n:step r:rand tab:cursor ±:speed c:clear q:quit ",
+        dim,
+    ));
+
+    let status_line = Line::from(spans);
+    let status_widget =
+        Paragraph::new(status_line).style(Style::default().bg(Color::Rgb(45, 45, 65)));
     frame.render_widget(status_widget, chunks[1]);
 }
