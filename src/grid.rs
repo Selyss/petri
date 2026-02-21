@@ -1,8 +1,8 @@
 pub struct Grid {
     pub width: usize,
     pub height: usize,
-    pub cells: Vec<bool>,
-    scratch: Vec<bool>, // scratch buffer
+    pub cells: Vec<u16>,
+    scratch: Vec<u16>, // scratch buffer
 }
 
 impl Grid {
@@ -11,13 +11,13 @@ impl Grid {
         Self {
             width,
             height,
-            cells: vec![false; size],
-            scratch: vec![false; size],
+            cells: vec![0; size],
+            scratch: vec![0; size],
         }
     }
 
     pub fn population(&self) -> usize {
-        self.cells.iter().filter(|&&c| c).count()
+        self.cells.iter().filter(|&&c| c > 0).count()
     }
 
     pub fn count_neighbors(&self, x: usize, y: usize) -> u8 {
@@ -29,7 +29,7 @@ impl Grid {
                 }
                 let nx = (x as isize + dx).rem_euclid(self.width as isize) as usize;
                 let ny = (y as isize + dy).rem_euclid(self.height as isize) as usize;
-                if self.cells[ny * self.width + nx] {
+                if self.cells[ny * self.width + nx] > 0 {
                     count += 1;
                 }
             }
@@ -42,10 +42,15 @@ impl Grid {
             for x in 0..self.width {
                 let idx = y * self.width + x;
                 let neighbors = self.count_neighbors(x, y);
-                let alive = self.cells[idx];
+                let age = self.cells[idx];
 
-                self.scratch[idx] =
-                    matches!((alive, neighbors), (true, 2) | (true, 3) | (false, 3));
+                self.scratch[idx] = if age > 0 && (neighbors == 2 || neighbors == 3) {
+                    age.saturating_add(1)
+                } else if age == 0 && neighbors == 3 {
+                    1
+                } else {
+                    0
+                };
             }
         }
         std::mem::swap(&mut self.cells, &mut self.scratch);
@@ -56,13 +61,17 @@ impl Grid {
         for y in 0..self.height {
             for x in 0..self.width {
                 let alive = fastrand::f64() < 0.25;
-                self.cells[y * self.width + x] = alive;
+                if alive {
+                    self.cells[y * self.width + x] = 1;
+                } else {
+                    self.cells[y * self.width + x] = 0;
+                }
             }
         }
     }
 
     pub fn clear(&mut self) {
-        self.cells.fill(false);
+        self.cells.fill(0);
     }
 }
 #[cfg(test)]
@@ -73,7 +82,7 @@ mod tests {
     fn grid_from_points(width: usize, height: usize, alive: &[(usize, usize)]) -> Grid {
         let mut grid = Grid::new(width, height);
         for &(x, y) in alive {
-            grid.cells[y * width + x] = true;
+            grid.cells[y * width + x] = 1;
         }
         grid
     }
@@ -83,7 +92,7 @@ mod tests {
         let mut result = Vec::new();
         for y in 0..grid.height {
             for x in 0..grid.width {
-                if grid.cells[y * grid.width + x] {
+                if grid.cells[y * grid.width + x] > 0 {
                     result.push((x, y));
                 }
             }

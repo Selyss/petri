@@ -15,7 +15,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         let mut spans = Vec::new();
         for x in 0..app.grid.width {
             let alive = app.grid.cells[y * app.grid.width + x];
-            let symbol = if alive { "██" } else { "  " };
+            let symbol = if alive > 0 { "██" } else { "  " };
 
             let style = if x == app.cursor_x && y == app.cursor_y && app.cursor_visible {
                 Style::default().bg(Color::LightGreen)
@@ -52,7 +52,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let sep = Span::styled(" │ ", dim);
 
     let cursor_info = if app.cursor_visible {
-        let cell_state = if app.grid.cells[app.cursor_y * app.grid.width + app.cursor_x] {
+        let cell_state = if app.grid.cells[app.cursor_y * app.grid.width + app.cursor_x] > 0 {
             "●"
         } else {
             "○"
