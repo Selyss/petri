@@ -3,6 +3,18 @@ use crate::patterns;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Paragraph};
 
+fn age_color(age: u16) -> Color {
+    match age {
+        0 => Color::Reset,
+        1 => Color::Rgb(40, 80, 40),
+        2..=5 => Color::Rgb(60, 140, 60),
+        6..=15 => Color::Rgb(100, 180, 50),
+        16..=40 => Color::Rgb(180, 180, 40),
+        41..=100 => Color::Rgb(220, 140, 30),
+        _ => Color::Rgb(240, 240, 240),
+    }
+}
+
 pub fn draw(frame: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -14,13 +26,13 @@ pub fn draw(frame: &mut Frame, app: &App) {
     for y in 0..app.grid.height {
         let mut spans = Vec::new();
         for x in 0..app.grid.width {
-            let alive = app.grid.cells[y * app.grid.width + x];
-            let symbol = if alive > 0 { "██" } else { "  " };
+            let age = app.grid.cells[y * app.grid.width + x];
+            let symbol = if age > 0 { "██" } else { "  " };
 
             let style = if x == app.cursor_x && y == app.cursor_y && app.cursor_visible {
                 Style::default().bg(Color::LightGreen)
             } else {
-                Style::default()
+                Style::default().fg(age_color(age))
             };
             spans.push(Span::styled(symbol, style));
         }

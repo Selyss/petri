@@ -48,7 +48,7 @@ impl App {
 
     pub fn toggle_cell(&mut self) {
         let idx = self.cursor_y * self.grid.width + self.cursor_x;
-        self.grid.cells[idx] = !self.grid.cells[idx];
+        self.grid.cells[idx] = if self.grid.cells[idx] > 0 { 0 } else { 1 };
     }
 
     pub fn move_left(&mut self) {
