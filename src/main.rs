@@ -36,10 +36,10 @@ fn main() -> io::Result<()> {
 
 fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
     let (cols, rows) = crossterm::terminal::size()?;
-    let grid_width = (cols as usize - 2) / 2;
-    let grid_height = rows as usize - 5;
+    let view_width = (cols as usize - 2) / 2;
+    let view_height = rows as usize - 3;
 
-    let mut app = app::App::new(grid_width, grid_height);
+    let mut app = app::App::new(256, 256, view_width, view_height);
     let mut last_tick = Instant::now();
 
     loop {

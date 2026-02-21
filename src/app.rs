@@ -11,10 +11,15 @@ pub struct App {
     pub tick_rate: Duration,
     pub cursor_visible: bool,
     pub pattern_mode: bool,
+    pub view_width: usize,
+    pub view_height: usize,
+    pub viewport_x: usize,
+    pub viewport_y: usize,
+    pub zoom: usize,
 }
 
 impl App {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: usize, height: usize, view_width: usize, view_height: usize) -> Self {
         Self {
             grid: Grid::new(width, height),
             paused: true,
@@ -24,6 +29,11 @@ impl App {
             tick_rate: Duration::from_millis(100),
             cursor_visible: false,
             pattern_mode: false,
+            view_width,
+            view_height,
+            viewport_x: 0,
+            viewport_y: 0,
+            zoom: 1,
         }
     }
 
