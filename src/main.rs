@@ -1,4 +1,5 @@
 mod app;
+mod export;
 mod grid;
 mod patterns;
 mod ui;
@@ -75,6 +76,30 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                         if idx >= 1 && idx <= patterns::ALL.len() {
                             app.place_pattern(patterns::ALL[idx - 1]);
                             app.pattern_mode = false;
+                        }
+                    }
+                    KeyCode::Char('g') => {
+                        if app.recording {
+                            let frames = app.stop_recording();
+                            let tick_ms = app.tick_rate.as_millis() as u16;
+                            match export::encode_gif(
+                                &frames,
+                                app.grid.width,
+                                app.grid.height,
+                                4,
+                                tick_ms,
+                            ) {
+                                Ok(filename) => {
+                                    app.last_export_msg =
+                                        Some(format!("Saved {} ({} frames)", filename, frames.len()));
+                                }
+                                Err(e) => {
+                                    app.last_export_msg = Some(format!("Export failed: {}", e));
+                                }
+                            }
+                        } else {
+                            app.start_recording();
+                            app.last_export_msg = None;
                         }
                     }
                     KeyCode::Esc => {

@@ -3,7 +3,7 @@ use crate::patterns;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Paragraph};
 
-fn age_color(age: u16) -> Color {
+pub fn age_color(age: u16) -> Color {
     match age {
         0 => Color::Reset,
         1 => Color::Rgb(40, 80, 40),
@@ -196,6 +196,27 @@ pub fn draw(frame: &mut Frame, app: &App) {
     ];
     spans.extend(cursor_info);
     spans.extend(mode_spans);
+
+    if app.recording {
+        spans.push(sep.clone());
+        spans.push(Span::styled(
+            format!(" REC {} ", app.recorded_frames.len()),
+            Style::default()
+                .bg(Color::Rgb(200, 40, 40))
+                .fg(Color::White),
+        ));
+    }
+
+    if let Some(ref msg) = app.last_export_msg {
+        spans.push(sep.clone());
+        spans.push(Span::styled(
+            format!(" {} ", msg),
+            Style::default()
+                .bg(Color::Rgb(60, 120, 180))
+                .fg(Color::White),
+        ));
+    }
+
     spans.push(sep.clone());
     spans.push(Span::styled(
         " [spc] pause  [n] step  [r] rand  [tab] cursor  [±] speed  [\\[\\]] zoom  [c] clear  [q] quit ",

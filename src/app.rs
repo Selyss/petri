@@ -16,6 +16,9 @@ pub struct App {
     pub viewport_x: usize,
     pub viewport_y: usize,
     pub zoom: i32,
+    pub recording: bool,
+    pub recorded_frames: Vec<Vec<u16>>,
+    pub last_export_msg: Option<String>,
 }
 
 impl App {
@@ -34,12 +37,29 @@ impl App {
             viewport_x: 0,
             viewport_y: 0,
             zoom: 1,
+            recording: false,
+            recorded_frames: Vec::new(),
+            last_export_msg: None,
         }
     }
 
     pub fn step(&mut self) {
         self.grid.step();
         self.generation += 1;
+        if self.recording {
+            self.recorded_frames.push(self.grid.cells.clone());
+        }
+    }
+
+    pub fn start_recording(&mut self) {
+        self.recorded_frames.clear();
+        self.recorded_frames.push(self.grid.cells.clone());
+        self.recording = true;
+    }
+
+    pub fn stop_recording(&mut self) -> Vec<Vec<u16>> {
+        self.recording = false;
+        std::mem::take(&mut self.recorded_frames)
     }
 
     pub fn toggle_pause(&mut self) {
