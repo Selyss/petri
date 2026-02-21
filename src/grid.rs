@@ -16,6 +16,10 @@ impl Grid {
         }
     }
 
+    pub fn population(&self) -> usize {
+        self.cells.iter().filter(|&&c| c).count()
+    }
+
     pub fn count_neighbors(&self, x: usize, y: usize) -> u8 {
         let mut count = 0u8;
         for dy in [-1isize, 0, 1] {

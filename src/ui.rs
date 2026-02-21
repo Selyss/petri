@@ -93,6 +93,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
         sep.clone(),
         Span::styled(format!(" Gen: {} ", app.generation), bright),
         sep.clone(),
+        Span::styled(format!(" Alive: {} ", app.grid.population()), bright),
+        sep.clone(),
         Span::styled(format!(" {}ms ", app.tick_rate.as_millis()), bright),
     ];
     spans.extend(cursor_info);
