@@ -200,7 +200,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.recording {
         spans.push(sep.clone());
         spans.push(Span::styled(
-            format!(" REC {} ", app.recorded_frames.len()),
+            format!(" REC {}/{} ", app.recorded_frames.len(), crate::app::MAX_RECORDING_FRAMES),
             Style::default()
                 .bg(Color::Rgb(200, 40, 40))
                 .fg(Color::White),

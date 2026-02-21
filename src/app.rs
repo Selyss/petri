@@ -2,6 +2,8 @@ use std::time::Duration;
 
 use crate::grid::Grid;
 
+pub const MAX_RECORDING_FRAMES: usize = 500;
+
 pub struct App {
     pub grid: Grid,
     pub paused: bool,
@@ -17,6 +19,7 @@ pub struct App {
     pub viewport_y: usize,
     pub zoom: i32,
     pub recording: bool,
+    pub recording_capped: bool,
     pub recorded_frames: Vec<Vec<u16>>,
     pub last_export_msg: Option<String>,
 }
@@ -38,6 +41,7 @@ impl App {
             viewport_y: 0,
             zoom: 1,
             recording: false,
+            recording_capped: false,
             recorded_frames: Vec::new(),
             last_export_msg: None,
         }
@@ -48,6 +52,10 @@ impl App {
         self.generation += 1;
         if self.recording {
             self.recorded_frames.push(self.grid.cells.clone());
+            if self.recorded_frames.len() >= MAX_RECORDING_FRAMES {
+                self.recording = false;
+                self.recording_capped = true;
+            }
         }
     }
 
@@ -55,6 +63,7 @@ impl App {
         self.recorded_frames.clear();
         self.recorded_frames.push(self.grid.cells.clone());
         self.recording = true;
+        self.recording_capped = false;
     }
 
     pub fn stop_recording(&mut self) -> Vec<Vec<u16>> {

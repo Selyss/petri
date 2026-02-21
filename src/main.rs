@@ -114,6 +114,26 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
             if !app.paused {
                 app.step();
             }
+            if app.recording_capped {
+                app.recording_capped = false;
+                let frames = app.stop_recording();
+                let tick_ms = app.tick_rate.as_millis() as u16;
+                match export::encode_gif(
+                    &frames,
+                    app.grid.width,
+                    app.grid.height,
+                    4,
+                    tick_ms,
+                ) {
+                    Ok(filename) => {
+                        app.last_export_msg =
+                            Some(format!("Auto-saved {} ({} frames)", filename, frames.len()));
+                    }
+                    Err(e) => {
+                        app.last_export_msg = Some(format!("Export failed: {}", e));
+                    }
+                }
+            }
             last_tick = Instant::now();
         }
     }
