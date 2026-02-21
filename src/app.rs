@@ -15,7 +15,7 @@ pub struct App {
     pub view_height: usize,
     pub viewport_x: usize,
     pub viewport_y: usize,
-    pub zoom: usize,
+    pub zoom: i32,
 }
 
 impl App {
@@ -91,6 +91,18 @@ impl App {
 
     pub fn toggle_cursor(&mut self) {
         self.cursor_visible = !self.cursor_visible;
+    }
+
+    pub fn zoom_in(&mut self) {
+        if self.zoom < 8 {
+            self.zoom += 1;
+        }
+    }
+
+    pub fn zoom_out(&mut self) {
+        if self.zoom > 0 {
+            self.zoom -= 1;
+        }
     }
 
     pub fn place_pattern(&mut self, patterns: &crate::patterns::Pattern) {

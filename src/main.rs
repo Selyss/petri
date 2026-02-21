@@ -62,6 +62,8 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
                     KeyCode::Char('+') | KeyCode::Char('=') => app.speed_up(),
                     KeyCode::Char('-') => app.slow_down(),
                     KeyCode::Tab => app.toggle_cursor(),
+                    KeyCode::Char(']') => app.zoom_in(),
+                    KeyCode::Char('[') => app.zoom_out(),
                     KeyCode::Char('p') => {
                         app.pattern_mode = !app.pattern_mode;
                         if app.pattern_mode && !app.cursor_visible {
