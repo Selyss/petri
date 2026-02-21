@@ -23,9 +23,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let mut lines: Vec<Line> = Vec::new();
 
-    for y in 0..app.grid.height {
+    let visible_cols = app.view_width / app.zoom;
+    let visible_rows = app.view_height / app.zoom;
+    for y in app.viewport_y..app.viewport_y + visible_rows {
         let mut spans = Vec::new();
-        for x in 0..app.grid.width {
+        for x in app.viewport_x..app.viewport_x + visible_cols {
             let age = app.grid.cells[y * app.grid.width + x];
             let symbol = if age > 0 { "██" } else { "  " };
 
