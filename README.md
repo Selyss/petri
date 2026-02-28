@@ -2,6 +2,8 @@
 
 A terminal-based Conway's Game of Life simulator built with Rust and [Ratatui](https://github.com/ratatui/ratatui). Features cell age visualization, adjustable zoom, pattern placement, and GIF recording.
 
+![Petri demo](assets/petri_1772242418.gif)
+
 ## Building
 
 ```
